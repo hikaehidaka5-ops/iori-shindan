@@ -18,6 +18,26 @@
   header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--gold),var(--accent));}
   header h1{font-family:'Noto Serif JP',serif;font-size:1.3rem;font-weight:900;letter-spacing:.15em;line-height:1.4;}
   header p{font-size:.72rem;opacity:.6;margin-top:4px;letter-spacing:.1em;}
+  .ai-add-btn{width:100%;background:linear-gradient(135deg,#1a1410,#3a2a1a);color:var(--gold);border:1.5px solid var(--gold);border-radius:6px;padding:14px;font-size:.88rem;font-family:'Noto Serif JP',serif;font-weight:700;letter-spacing:.12em;cursor:pointer;margin-bottom:12px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .ai-add-btn:hover{background:linear-gradient(135deg,#2d2018,#4a3a2a);transform:translateY(-1px);box-shadow:0 4px 12px rgba(201,168,76,.3);}
+  .ai-add-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .ai-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .ai-modal.show{display:flex;}
+  .ai-modal-inner{background:var(--paper);border-radius:12px;padding:24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+  .ai-modal-title{font-family:'Noto Serif JP',serif;font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--ink);}
+  .ai-modal-label{font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:.1em;margin-bottom:6px;display:block;}
+  .ai-select{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.85rem;background:var(--paper2);color:var(--ink);margin-bottom:12px;}
+  .ai-count{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:.85rem;background:var(--paper2);color:var(--ink);margin-bottom:16px;}
+  .ai-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .ai-cancel{background:transparent;border:1.5px solid var(--border);border-radius:6px;padding:12px;font-family:inherit;font-size:.85rem;cursor:pointer;color:#888;}
+  .ai-go{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:12px;font-family:'Noto Serif JP',serif;font-weight:700;font-size:.85rem;cursor:pointer;letter-spacing:.08em;}
+  .ai-go:disabled{background:#bbb;cursor:not-allowed;}
+  .ai-status{margin-top:12px;font-size:.78rem;text-align:center;color:var(--accent2);min-height:20px;font-weight:500;}
+  .ai-progress{display:none;margin-top:8px;}
+  .ai-progress.show{display:block;}
+  .ai-prog-bar{height:4px;background:var(--paper2);border-radius:2px;overflow:hidden;border:1px solid var(--border);}
+  .ai-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;transition:width .3s ease;width:0%;}
+  .q-count-badge{font-size:.6rem;color:#888;margin-top:2px;display:block;}
   .container{max-width:640px;margin:0 auto;padding:16px;}
   #screen-subject{display:block;}#screen-quiz{display:none;}
   .section-label{font-size:.68rem;letter-spacing:.2em;color:var(--accent);font-weight:700;margin-bottom:10px;}
@@ -78,16 +98,48 @@
     <br>
     <div class="section-label">科目を選択してください（複数可）</div>
     <div class="subject-grid">
-      <button class="subject-btn" data-subject="企業経営理論"><span class="num">科目①</span><span class="name">企業経営理論</span></button>
-      <button class="subject-btn" data-subject="経営法務"><span class="num">科目②</span><span class="name">経営法務</span></button>
-      <button class="subject-btn" data-subject="財務・会計"><span class="num">科目③</span><span class="name">財務・会計</span></button>
-      <button class="subject-btn" data-subject="運営管理"><span class="num">科目④</span><span class="name">運営管理</span></button>
-      <button class="subject-btn" data-subject="中小企業経営・政策"><span class="num">科目⑤</span><span class="name">中小企業経営・政策</span></button>
-      <button class="subject-btn" data-subject="経営情報システム"><span class="num">科目⑥</span><span class="name">経営情報システム</span></button>
-      <button class="subject-btn" data-subject="経済学・経済政策"><span class="num">科目⑦</span><span class="name">経済学・経済政策</span></button>
+      <button class="subject-btn" data-subject="企業経営理論"><span class="num">科目①</span><span class="name">企業経営理論</span><span class="q-count-badge" id="cnt-企業経営理論"></span></button>
+      <button class="subject-btn" data-subject="経営法務"><span class="num">科目②</span><span class="name">経営法務</span><span class="q-count-badge" id="cnt-経営法務"></span></button>
+      <button class="subject-btn" data-subject="財務・会計"><span class="num">科目③</span><span class="name">財務・会計</span><span class="q-count-badge" id="cnt-財務・会計"></span></button>
+      <button class="subject-btn" data-subject="運営管理"><span class="num">科目④</span><span class="name">運営管理</span><span class="q-count-badge" id="cnt-運営管理"></span></button>
+      <button class="subject-btn" data-subject="中小企業経営・政策"><span class="num">科目⑤</span><span class="name">中小企業経営・政策</span><span class="q-count-badge" id="cnt-中小企業経営・政策"></span></button>
+      <button class="subject-btn" data-subject="経営情報システム"><span class="num">科目⑥</span><span class="name">経営情報システム</span><span class="q-count-badge" id="cnt-経営情報システム"></span></button>
+      <button class="subject-btn" data-subject="経済学・経済政策"><span class="num">科目⑦</span><span class="name">経済学・経済政策</span><span class="q-count-badge" id="cnt-経済学・経済政策"></span></button>
     </div>
     <button class="btn-all" id="btn-all">▶ すべての科目を選択</button>
+    <button class="ai-add-btn" id="ai-add-btn">✨ AIで問題を生成</button>
     <button class="start-btn" id="start-btn" disabled>問題を開始する →</button>
+  </div>
+
+  <!-- AI生成モーダル -->
+  <div class="ai-modal" id="ai-modal">
+    <div class="ai-modal-inner">
+      <div class="ai-modal-title">✨ AIで問題を生成・追加</div>
+      <label class="ai-modal-label">科目を選択</label>
+      <select class="ai-select" id="ai-subject-select">
+        <option value="企業経営理論">企業経営理論</option>
+        <option value="経営法務">経営法務</option>
+        <option value="財務・会計">財務・会計</option>
+        <option value="運営管理">運営管理</option>
+        <option value="中小企業経営・政策">中小企業経営・政策</option>
+        <option value="経営情報システム">経営情報システム</option>
+        <option value="経済学・経済政策">経済学・経済政策</option>
+      </select>
+      <label class="ai-modal-label">生成する問題数</label>
+      <select class="ai-count" id="ai-count-select">
+        <option value="5">5問</option>
+        <option value="10" selected>10問</option>
+        <option value="20">20問</option>
+      </select>
+      <div class="ai-modal-btns">
+        <button class="ai-cancel" onclick="closeAiModal()">キャンセル</button>
+        <button class="ai-go" id="ai-go-btn" onclick="generateQuestions()">生成する</button>
+      </div>
+      <div class="ai-progress" id="ai-progress">
+        <div class="ai-prog-bar"><div class="ai-prog-fill" id="ai-prog-fill"></div></div>
+      </div>
+      <div class="ai-status" id="ai-status"></div>
+    </div>
   </div>
   <div id="screen-quiz">
     <br>
@@ -370,7 +422,88 @@ const Q={
 let pool=[],poolPointer=0,currentQ=null;
 let answered=0,correct=0,wrong=0,questionCount=0;
 
-document.querySelectorAll('.subject-btn').forEach(btn=>{
+document.getElementById('ai-add-btn').addEventListener('click',()=>{
+  document.getElementById('ai-modal').className='ai-modal show';
+  document.getElementById('ai-status').textContent='';
+  document.getElementById('ai-prog-fill').style.width='0%';
+  document.getElementById('ai-progress').className='ai-progress';
+  document.getElementById('ai-go-btn').disabled=false;
+});
+function closeAiModal(){
+  document.getElementById('ai-modal').className='ai-modal';
+}
+function updateCountBadges(){
+  Object.keys(Q).forEach(s=>{
+    const el=document.getElementById('cnt-'+s);
+    if(el) el.textContent=Q[s].length+'問収録中';
+  });
+}
+updateCountBadges();
+
+async function generateQuestions(){
+  const subject=document.getElementById('ai-subject-select').value;
+  const count=parseInt(document.getElementById('ai-count-select').value);
+  const goBtn=document.getElementById('ai-go-btn');
+  const status=document.getElementById('ai-status');
+  const prog=document.getElementById('ai-progress');
+  const progFill=document.getElementById('ai-prog-fill');
+
+  goBtn.disabled=true;
+  prog.className='ai-progress show';
+  progFill.style.width='10%';
+  status.textContent='AIが問題を生成しています...';
+
+  // 既存問題のサンプル（重複防止用）
+  const existing=Q[subject].slice(0,5).map(q=>q.q.slice(0,30)).join('、');
+
+  const prompt=`あなたは中小企業診断士一次試験の問題作成専門家です。
+「${subject}」の正誤問題（○×問題）を${count}問作成してください。
+
+条件：
+- 以下の既存問題と重複しないこと：${existing}
+- 実際の試験レベルの難易度
+- 以下のJSON配列形式のみで回答（マークダウン不要）
+
+[
+  {"q":"問題文","a":true,"e":"解説文"},
+  ...
+]`;
+
+  try {
+    progFill.style.width='40%';
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:4000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    progFill.style.width='75%';
+    const data=await res.json();
+    if(!res.ok) throw new Error('API Error: '+JSON.stringify(data));
+    const raw=data.content[0].text.trim();
+    const match=raw.match(/\[[\s\S]*\]/);
+    if(!match) throw new Error('JSON配列が見つかりません');
+    const newQs=JSON.parse(match[0]);
+    // 追加
+    newQs.forEach(q=>{
+      if(q.q&&q.e&&typeof q.a==='boolean'){
+        Q[subject].push({q:q.q,a:q.a,e:q.e});
+      }
+    });
+    progFill.style.width='100%';
+    status.textContent=`✅ ${newQs.length}問を「${subject}」に追加しました！`;
+    updateCountBadges();
+    setTimeout(()=>{ closeAiModal(); },2000);
+  } catch(e) {
+    progFill.style.width='0%';
+    status.style.color='var(--wrong)';
+    status.textContent='⚠ エラー：'+e.message;
+    goBtn.disabled=false;
+  }
+}
   btn.addEventListener('click',()=>{btn.classList.toggle('selected');updateStartBtn();});
 });
 document.getElementById('btn-all').addEventListener('click',()=>{
